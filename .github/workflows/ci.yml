@@ -10,25 +10,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    timeout-minutes: 2
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install GCC
-        run: sudo apt-get update && sudo apt-get install -y gcc
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-      - name: Compile project
-        run: gcc main.c browser_history.c -o browser_test -Wall -Wextra
+      - name: Compile C Code
+        run: |
+          gcc main.c browser_history.c -o browser_test -Wall -Wextra
+
+      - name: Make executable
+        run: chmod +x browser_test
 
       - name: Run Python Tests
-        run: python3 test-runner.py
-
-      - name: Check if executable works
-        run: |
-          if [ -f "./test" ]; then
-            echo "✅ Compilation successful - executable created"
-            ./test || echo "⚠️  Program ran but may have issues"
-          else
-            echo "❌ Compilation failed - no executable found"
-            exit 1
-          fi
+        run: python3 test_runner.py
