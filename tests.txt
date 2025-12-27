@@ -1,0 +1,11 @@
+START leetcode.com | null
+VISIT google.com | null
+VISIT facebook.com | null
+VISIT youtube.com | null
+BACK 1 | facebook.com
+BACK 1 | google.com
+FORWARD 1 | facebook.com
+VISIT linkedin.com | null
+FORWARD 2 | linkedin.com
+BACK 2 | google.com
+EXIT | null
