@@ -18,10 +18,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y gcc
 
       - name: Compile project
-        run: gcc browser_history.c test.c -o test -Wall -Wextra
+        run: gcc main.c browser_history.c -o browser_test -Wall -Wextra
 
-      - name: Run tests
-        run: ./test
+      - name: Run Python Tests
+        run: python3 test-runner.py
 
       - name: Check if executable works
         run: |
