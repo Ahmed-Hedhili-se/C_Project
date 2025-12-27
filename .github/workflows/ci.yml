@@ -29,4 +29,4 @@ jobs:
         run: chmod +x browser_test
 
       - name: Run Python Tests
-        run: python3 test_runner.py
+        run: python3 test-runner.py
