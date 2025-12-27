@@ -7,26 +7,19 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     timeout-minutes: 2
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Compile C Code
+      - name: Compile Test Driver
+        # We compile test_main.c instead of main.c
         run: |
-          gcc main.c browser_history.c -o browser_test -Wall -Wextra
+          gcc test_main.c browser_history.c -o test_runner -Wall -Wextra
 
-      - name: Make executable
-        run: chmod +x browser_test
-
-      - name: Run Python Tests
-        run: python3 test-runner.py
+      - name: Run Tests
+        # The C program reads tests.txt automatically
+        run: ./test_runner
