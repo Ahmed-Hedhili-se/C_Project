@@ -1,94 +1,84 @@
-import json
 import subprocess
 import os
+import sys
 
 def run_tests():
-    # 0. Check if tests.json exists
-    if not os.path.isfile('tests.json'):
-        print("❌ Error: 'tests.json' not found in the repository.")
-        exit(1)
+    executable = "./browser_test"
 
-    # 1. Load the JSON file
-    with open('tests.json', 'r') as f:
-        data = json.load(f)
+    # 1. Check if executable exists
+    if not os.path.isfile(executable):
+        print(f"❌ Error: Executable {executable} not found.")
+        sys.exit(1)
 
-    # 2. Start your C program
+    # 2. Start the C process
     process = subprocess.Popen(
-        ['./browser_test'],
+        [executable],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
     )
 
-    # 3. Define a Translation Map (JSON -> C)
-    # This maps the LeetCode style names to your main.c keywords
-    command_map = {
-        "BrowserHistory": "START",
-        "visit":          "VISIT",
-        "back":           "BACK",
-        "forward":        "FORWARD"
-    }
+    print(f"🚀 Starting Test Runner against {executable}...\n")
 
-    test_case = data['test_cases'][0]
-    actions = test_case['actions']
-    params = test_case['params']
-    expected = test_case['expected']
-
-    print(f"Running: {test_case['name']}\n" + "-"*30)
+    # 3. Define commands EXACTLY as main.c expects them
+    # Format: (Command to send, Expected Output)
+    tests = [
+        ("START leetcode.com", "null"),
+        ("VISIT google.com",   "null"),
+        ("VISIT facebook.com", "null"),
+        ("VISIT youtube.com",  "null"),
+        ("BACK 1",             "facebook.com"),
+        ("BACK 1",             "google.com"),
+        ("FORWARD 1",          "facebook.com"),
+        ("VISIT linkedin.com", "null"),
+        ("FORWARD 2",          "linkedin.com"),
+        ("BACK 2",             "google.com"),
+        ("EXIT",               None) # EXIT doesn't return an output line
+    ]
 
     all_passed = True
 
     try:
-        # 4. Loop through actions
-        for i, action in enumerate(actions):
-            argument = params[i][0] if params[i] else ""
-
-            # TRANSLATE the command
-            c_command = command_map.get(action, action)
-
-            # Send command to C program
-            command_str = f"{c_command} {argument}\n"
-            process.stdin.write(command_str)
+        for command, expected in tests:
+            # Send the command
+            print(f"➡️  Input: {command}")
+            process.stdin.write(command + "\n")
             process.stdin.flush()
 
-            # Read result
-            actual_output = process.stdout.readline().strip()
+            # If it's EXIT, we don't wait for output, we just break
+            if command == "EXIT":
+                break
 
-            # Prepare expected string
-            expected_output = expected[i]
-            if expected_output is None:
-                expected_str = "null"
-            else:
-                expected_str = expected_output
+            # Read the response
+            actual = process.stdout.readline().strip()
 
-            # Compare
-            if actual_output == expected_str:
-                print(f"✅ Action: {action:<15} | Output: {actual_output}")
+            # Check if C program crashed/closed early
+            if not actual and process.poll() is not None:
+                print("❌ Error: C program exited prematurely.")
+                all_passed = False
+                break
+
+            # Compare results
+            if actual == expected:
+                print(f"   ✅ PASS (Got: {actual})")
             else:
-                print(f"❌ Action: {action:<15} | Expected: {expected_str}, Got: '{actual_output}'")
+                print(f"   ❌ FAIL (Expected: {expected}, Got: {actual})")
                 all_passed = False
 
     except Exception as e:
-        print(f"\n⚠️ Crash or Timeout: {e}")
+        print(f"\n⚠️ Error during execution: {e}")
         all_passed = False
 
-    # 5. Clean up
-    # Send EXIT to ensure C program closes (if it supports it)
-    try:
-        process.stdin.write("EXIT\n")
-        process.stdin.flush()
-    except:
-        pass
-
+    # cleanup
     process.terminate()
 
     if all_passed:
         print("\n🎉 ALL TESTS PASSED!")
-        exit(0)
+        sys.exit(0)
     else:
-        print("\n💀 TESTS FAILED")
-        exit(1)
+        print("\n💀 SOME TESTS FAILED.")
+        sys.exit(1)
 
 if __name__ == "__main__":
     run_tests()
