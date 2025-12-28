@@ -14,7 +14,7 @@ void trim(char *s) {
 }
 
 int main() {
-    FILE *file = fopen("tests.txt", "r");
+    FILE *file = fopen("tests_2.txt", "r");
     if (!file) {
         printf("❌ Error: Could not open tests.txt\n");
         return 1;
