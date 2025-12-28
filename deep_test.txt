@@ -1,0 +1,13 @@
+START a.com | null
+VISIT b.com | null
+VISIT c.com | null
+VISIT d.com | null
+VISIT e.com | null
+BACK 2 | c.com
+BACK 1 | b.com
+FORWARD 1 | c.com
+VISIT f.com | null
+BACK 2 | b.com
+BACK 1 | a.com
+FORWARD 3 | f.com
+EXIT | null
