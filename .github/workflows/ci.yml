@@ -16,10 +16,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Compile Test Driver
-        # We compile test_main.c instead of main.c
         run: |
           gcc test_main.c browser_history.c -o test_runner -Wall -Wextra
 
       - name: Run Tests
-        # The C program reads tests.txt automatically
         run: ./test_runner
