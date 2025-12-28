@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+//________________
 typedef struct {
     char **history;     
     int size;           
     int current_url;    
     int last_url;       
 }BrowserHistory;
+//________________
 
 BrowserHistory* browserHistoryCreate(const char* homepage) {
 
@@ -19,7 +21,6 @@ BrowserHistory* browserHistoryCreate(const char* homepage) {
         free(obj);
         return NULL;
     }
-
     obj->history[0] = strdup(homepage);  
     obj->current_url = 0;
     obj->last_url = 0;
@@ -31,9 +32,7 @@ void browserHistoryVisit(BrowserHistory* obj, const char* url) {
 
     // resize if array is full
     if (obj->current_url >= obj->size) {
-        obj->size *= 2;
-
-        
+        obj->size *= 2;    
         char **temp = (char**)realloc(obj->history, obj->size * sizeof(char*));
         if (!temp) {
             
@@ -42,7 +41,6 @@ void browserHistoryVisit(BrowserHistory* obj, const char* url) {
         obj->history = temp;
     }
     obj->history[obj->current_url] = strdup(url);
-
     obj->last_url = obj->current_url;
 }
 
@@ -51,7 +49,6 @@ char* browserHistoryBack(BrowserHistory* obj, int steps) {
     obj->current_url -= steps;
     if (obj->current_url < 0)
         obj->current_url = 0;
-
     return obj->history[obj->current_url];
 }
 char* browserHistoryForward(BrowserHistory* obj, int steps) {
