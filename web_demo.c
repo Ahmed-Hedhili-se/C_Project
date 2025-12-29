@@ -1,66 +1,50 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include "browser_history.h"
 
 int main() {
-    // 1. FIX BUFFERING: Force printf to show text immediately
+    // Force output to appear immediately
     setbuf(stdout, NULL);
-    setbuf(stdin, NULL);
 
     printf("======================================\n");
     printf("   WebAssembly Browser History Demo   \n");
-    printf("======================================\n");
-    printf("Commands:\n");
-    printf("  visit <url>  : Visit a new page\n");
-    printf("  back <steps> : Go back steps\n");
-    printf("  fwd <steps>  : Go forward steps\n");
-    printf("  quit         : Exit\n");
-    printf("--------------------------------------\n");
+    printf("   (Automatic Simulation Mode)        \n");
+    printf("======================================\n\n");
 
+    // 1. Initialize
     BrowserHistory *obj = browserHistoryCreate("homepage.com");
-    printf("Start Page: homepage.com\n");
+    printf("[Start]  Current Page: homepage.com\n");
 
-    char command[100];
-    char arg[100];
+    // 2. Visit sites
+    printf("\n> Command: visit youtube.com\n");
+    browserHistoryVisit(obj, "youtube.com");
+    printf("   Output: You are now at youtube.com\n");
 
-    while (1) {
-        printf("\n> ");
+    printf("\n> Command: visit github.com\n");
+    browserHistoryVisit(obj, "github.com");
+    printf("   Output: You are now at github.com\n");
 
-        // 2. FIX INFINITE LOOP: Check if input actually works
-        int result = scanf("%s", command);
+    // 3. Go Back
+    printf("\n> Command: back 1\n");
+    char* res = browserHistoryBack(obj, 1);
+    printf("   Output: Returned to %s\n", res);
 
-        // If user clicks "Cancel" or input fails, stop the loop!
-        if (result <= 0) {
-            break;
-        }
+    // 4. Go Back again
+    printf("\n> Command: back 1\n");
+    res = browserHistoryBack(obj, 1);
+    printf("   Output: Returned to %s\n", res);
 
-        if (strcmp(command, "visit") == 0) {
-            scanf("%s", arg);
-            browserHistoryVisit(obj, arg);
-            printf("Visited: %s\n", arg);
-        }
-        else if (strcmp(command, "back") == 0) {
-            int steps;
-            scanf("%d", &steps);
-            char* result = browserHistoryBack(obj, steps);
-            printf("Current Page: %s\n", result);
-        }
-        else if (strcmp(command, "fwd") == 0) {
-            int steps;
-            scanf("%d", &steps);
-            char* result = browserHistoryForward(obj, steps);
-            printf("Current Page: %s\n", result);
-        }
-        else if (strcmp(command, "quit") == 0) {
-            printf("Exiting...\n");
-            break;
-        }
-        else {
-            printf("Unknown command.\n");
-        }
-    }
+    // 5. Go Forward
+    printf("\n> Command: fwd 1\n");
+    res = browserHistoryForward(obj, 1);
+    printf("   Output: Forward to %s\n", res);
 
+    // Cleanup
     browserHistoryFree(obj);
+
+    printf("\n======================================\n");
+    printf("   Simulation Complete. Success!      \n");
+    printf("======================================\n");
+
     return 0;
 }
