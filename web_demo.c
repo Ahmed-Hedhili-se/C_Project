@@ -12,6 +12,7 @@ void clean_input(char *str) {
 }
 
 int main() {
+    setbuf(stdout, NULL);
     printf("======================================\n");
     printf("   WebAssembly Browser History Demo   \n");
     printf("======================================\n");
