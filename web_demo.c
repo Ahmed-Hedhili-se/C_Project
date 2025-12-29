@@ -3,16 +3,11 @@
 #include <stdlib.h>
 #include "browser_history.h"
 
-// Simple helper to remove newline characters
-void clean_input(char *str) {
-    size_t len = strlen(str);
-    if (len > 0 && str[len-1] == '\n') {
-        str[len-1] = '\0';
-    }
-}
-
 int main() {
+    // 1. FIX BUFFERING: Force printf to show text immediately
     setbuf(stdout, NULL);
+    setbuf(stdin, NULL);
+
     printf("======================================\n");
     printf("   WebAssembly Browser History Demo   \n");
     printf("======================================\n");
@@ -20,20 +15,25 @@ int main() {
     printf("  visit <url>  : Visit a new page\n");
     printf("  back <steps> : Go back steps\n");
     printf("  fwd <steps>  : Go forward steps\n");
-    printf("  current      : Show current page\n");
     printf("  quit         : Exit\n");
     printf("--------------------------------------\n");
 
-    // Initialize your history structure
-    // (Adjust this line if your init function has a different name!)
     BrowserHistory *obj = browserHistoryCreate("homepage.com");
+    printf("Start Page: homepage.com\n");
 
     char command[100];
     char arg[100];
 
     while (1) {
         printf("\n> ");
-        if (scanf("%s", command) == EOF) break;
+
+        // 2. FIX INFINITE LOOP: Check if input actually works
+        int result = scanf("%s", command);
+
+        // If user clicks "Cancel" or input fails, stop the loop!
+        if (result <= 0) {
+            break;
+        }
 
         if (strcmp(command, "visit") == 0) {
             scanf("%s", arg);
@@ -53,14 +53,14 @@ int main() {
             printf("Current Page: %s\n", result);
         }
         else if (strcmp(command, "quit") == 0) {
+            printf("Exiting...\n");
             break;
         }
         else {
-            printf("Unknown command. Try: visit, back, fwd\n");
+            printf("Unknown command.\n");
         }
     }
 
-    // Cleanup (optional for web demo but good practice)
     browserHistoryFree(obj);
     return 0;
 }
