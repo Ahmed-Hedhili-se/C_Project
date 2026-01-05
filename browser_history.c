@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 //________________
-typedef struct {
+struct BrowserHistory {  
     char **history;     
     int size;           
     int current_url;    
-    int last_url;       
-}BrowserHistory;
+    int last_url;        
+};
 //________________
 
 BrowserHistory* browserHistoryCreate(const char* homepage) {
