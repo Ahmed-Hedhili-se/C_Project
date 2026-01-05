@@ -1,3 +1,4 @@
+#include "browser_history.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +31,6 @@ BrowserHistory* browserHistoryCreate(const char* homepage) {
 void browserHistoryVisit(BrowserHistory* obj, const char* url) {
     obj->current_url++;
 
-    // resize if array is full
     if (obj->current_url >= obj->size) {
         obj->size *= 2;    
         char **temp = (char**)realloc(obj->history, obj->size * sizeof(char*));
